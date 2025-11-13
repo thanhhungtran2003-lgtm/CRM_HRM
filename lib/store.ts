@@ -187,62 +187,22 @@ export const useAppStore = create<AppState>()(
       login: async (email, password) => {
         try {
           set({ isLoading: true })
-          const response = await fetch("/api/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password }),
-          })
 
-          // Use clone() to inspect body safely, then parse original as JSON
-          let bodyText = null
-          try {
-            bodyText = await response.clone().text()
-          } catch (e) {
-            console.warn("Failed to clone response body:", e)
-          }
+          // Import and call Server Action
+          const { loginAction } = await import("@/app/actions/auth-actions")
+          const result = await loginAction(email, password)
 
-          if (!response.ok) {
-            // Provide richer debug info: status and body text
-            console.error(
-              `Login failed: status=${response.status} ${response.statusText}`,
-            )
-            if (bodyText) {
-              try {
-                const parsed = JSON.parse(bodyText)
-                console.error("Login response body:", parsed)
-              } catch (e) {
-                console.error("Login response body (text):", bodyText)
-              }
-            } else {
-              console.error("Login response body: <empty>")
-            }
+          if (!result.success) {
+            console.error("Login failed:", result.error)
             return false
           }
 
-          let data: any = {}
-          try {
-            data = await response.json()
-          } catch (e) {
-            // Fallback to parsed text if response.json() fails
-            try {
-              data = bodyText ? JSON.parse(bodyText) : {}
-            } catch (err) {
-              console.warn("Couldn't parse login response JSON, falling back to empty object", err)
-              data = {}
-            }
-          }
-
-          const { user } = data || {}
-          if (!user) {
-            console.error("No user in response, full response:", data)
-            return false
-          }
-          if (!user) {
-            console.error("No user in response")
+          if (!result.user) {
+            console.error("No user in login response")
             return false
           }
 
-          set({ user, isAuthenticated: true })
+          set({ user: result.user, isAuthenticated: true })
           return true
         } catch (error) {
           console.error("Login error:", error)
