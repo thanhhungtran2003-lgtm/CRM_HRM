@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { supabaseAdmin } from "@/lib/supabase/supabase"
+import { getSupabaseAdmin } from "@/lib/supabase/supabase"
 
 const ADMIN_EMAILS = new Set([
   "stephensouth1307@gmail.com",
