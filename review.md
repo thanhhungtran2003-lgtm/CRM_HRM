@@ -1,6 +1,6 @@
-# Vine CRM - Project Review & File Documentation
+# HRMCRM - Project Review & File Documentation
 
-**Project**: Vine CRM - Enterprise Resource Management Platform  
+**Project**: HRMCRM - Enterprise Resource Management Platform  
 **Type**: React + Vite + TypeScript + Tailwind CSS + Shadcn UI  
 **Database**: Supabase (PostgreSQL)  
 **Build Tool**: Vite  
@@ -110,7 +110,7 @@ All page components are located in `src/pages/` and serve as primary route handl
 ### `src/pages/Index.tsx`
 - **Purpose**: Landing/home page
 - **Features**:
-  - Hero section with "Vine CRM" branding
+  - Hero section with "HRMCRM" branding
   - Feature showcase grid (6 main features)
   - Call-to-action sections
   - Automatic redirect to dashboard if user is authenticated
@@ -213,7 +213,7 @@ All page components are located in `src/pages/` and serve as primary route handl
   - Error and success toast notifications
   - Automatic redirect to dashboard if already logged in
   - Loading states during authentication
-  - Vine CRM branding
+  - HRMCRM branding
 - **Related Functions**: signIn, signUp from auth library
 
 ---
@@ -225,7 +225,7 @@ All page components are located in `src/pages/` and serve as primary route handl
 #### `src/components/layout/DashboardLayout.tsx`
 - **Purpose**: Main layout wrapper for authenticated pages
 - **Features**:
-  - Sticky header with Vine CRM branding
+  - Sticky header with HRMCRM branding
   - User avatar dropdown menu with logout
   - Theme toggle (dark/light mode)
   - Notification bell

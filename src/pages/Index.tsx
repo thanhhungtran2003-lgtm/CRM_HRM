@@ -1,12 +1,53 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Grape, Users, CheckSquare, Calendar, TrendingUp, Shield, Zap } from "lucide-react";
+import { 
+  Users, CheckSquare, Calendar, TrendingUp, Shield, Zap,
+  Settings, Bot 
+} from "lucide-react"; // Đã thêm Settings và Bot cho AI/Workflow
 import { getCurrentUser } from "@/lib/auth";
+
+// --- Custom Constants ---
+const APP_NAME = "LifeOS HRM";
+
+// Danh sách các tính năng đã được tổ chức lại để bao gồm AI/Workflow
+const FEATURES = [
+  {
+    icon: Users,
+    title: "Organization & Roles",
+    description: "Manage teams, departments, and user hierarchy with RLS security."
+  },
+  {
+    icon: CheckSquare,
+    title: "Geo-Attendance",
+    description: "Real-time check-in/check-out with GPS validation (Haversine Formula)."
+  },
+  {
+    icon: Bot,
+    title: "AI Meeting Summary",
+    description: "Generate instant, intelligent summaries from meeting transcripts."
+  },
+  {
+    icon: Settings,
+    title: "Workflow Automation",
+    description: "Build n8n-like workflows for task and approval automation."
+  },
+  {
+    icon: TrendingUp,
+    title: "Performance Analytics",
+    description: "Role-based dashboards, evaluation scoring, and performance reports."
+  },
+  {
+    icon: Shield,
+    title: "Enterprise Security",
+    description: "Protected by Supabase RLS, JWT, and multi-level role access control."
+  }
+];
 
 const Index = () => {
   const navigate = useNavigate();
 
+  // Redirect Logic: Chuyển hướng người dùng đã đăng nhập về Dashboard
   useEffect(() => {
     const checkAuth = async () => {
       const user = await getCurrentUser();
@@ -17,108 +58,84 @@ const Index = () => {
     checkAuth();
   }, [navigate]);
 
-  const features = [
-    {
-      icon: Users,
-      title: "Organization Management",
-      description: "Manage teams, departments, and user hierarchy efficiently"
-    },
-    {
-      icon: CheckSquare,
-      title: "Attendance Tracking",
-      description: "Real-time check-in/check-out with shift management"
-    },
-    {
-      icon: Calendar,
-      title: "Meeting Rooms",
-      description: "Smart scheduling and resource allocation"
-    },
-    {
-      icon: TrendingUp,
-      title: "Analytics Dashboard",
-      description: "Role-based insights and performance reporting"
-    },
-    {
-      icon: Shield,
-      title: "Secure & Compliant",
-      description: "Enterprise-grade security with row-level access control"
-    },
-    {
-      icon: Zap,
-      title: "Real-time Updates",
-      description: "Live notifications and instant data synchronization"
-    }
-  ];
-
   return (
-    <div className="min-h-screen gradient-secondary">
-      {/* Hero Section */}
-      <section className="container mx-auto px-4 py-20 animate-fade-in">
-        <div className="text-center max-w-4xl mx-auto">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center shadow-strong">
-              <Grape className="w-10 h-10 text-white" />
+    <div className="min-h-screen bg-background text-foreground font-sans">
+      
+      {/* --- 1. HERO SECTION: Giới thiệu và Kêu gọi hành động --- */}
+      <section className="relative overflow-hidden pt-24 pb-32 md:pt-36 md:pb-48 gradient-secondary">
+        <div className="container mx-auto px-4 text-center animate-fade-in">
+          <div className="flex flex-col items-center max-w-5xl mx-auto">
+            
+            {/* Logo/Icon */}
+            <div className="w-16 h-16 rounded-3xl gradient-primary flex items-center justify-center mb-6 shadow-xl shadow-primary/30">
+              <Zap className="w-9 h-9 text-white animate-pulse-slow" />
             </div>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl font-heading font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">
-            Vine CRM
-          </h1>
-          
-          <p className="text-xl md:text-2xl text-muted-foreground mb-4">
-            Enterprise Resource Management Platform
-          </p>
-          
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Modern, powerful, and intelligent CRM system designed for internal business operations. 
-            Streamline attendance, tasks, meetings, and team management all in one place.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              className="text-lg px-8 shadow-medium hover:shadow-strong transition-smooth"
-              onClick={() => navigate("/auth/login")}
-            >
-              Get Started
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="text-lg px-8"
-              onClick={() => navigate("/auth/login")}
-            >
-              Sign In
-            </Button>
+            
+            {/* Title */}
+            <h1 className="text-5xl md:text-7xl font-extrabold mb-4 leading-tight tracking-tighter">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow">
+                Intelligent{" "}
+              </span>
+              HRM & Operations OS
+            </h1>
+            
+            {/* Subtitle */}
+            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl">
+              The modern, all-in-one platform for human resource management, powered by Supabase and AI.
+            </p>
+            
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                size="xl" // Giả sử bạn có size xl trong button
+                className="text-lg px-10 h-14 shadow-2xl shadow-primary/40 gradient-primary transition-all hover:scale-[1.03] transform"
+                onClick={() => navigate("/auth/login")}
+              >
+                Access Dashboard
+              </Button>
+              <Button 
+                size="xl"
+                variant="outline" 
+                className="text-lg px-10 h-14 border-2 border-border/80 transition-all hover:bg-muted"
+                onClick={() => navigate("/auth/login")}
+              >
+                Start Trial 
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-            Everything You Need
+      <hr className="border-t border-border/50" />
+
+      {/* --- 2. FEATURES GRID: Lưới tính năng --- */}
+      <section className="container mx-auto px-4 py-24">
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <p className="text-sm font-semibold uppercase text-primary mb-2 tracking-widest">
+            CORE MODULES
+          </p>
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight">
+            Comprehensive & Role-Specific
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Powerful features designed to streamline your business operations
+          <p className="text-lg text-muted-foreground">
+            From seamless check-ins with GPS to automated workflows and performance scoring, we cover everything.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {features.map((feature, index) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          {FEATURES.map((feature, index) => (
             <div 
               key={index}
-              className="p-6 rounded-xl bg-card border border-border shadow-soft hover:shadow-medium transition-smooth animate-scale-in"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="p-8 rounded-2xl bg-card border border-border shadow-lg transition-all duration-300 hover:shadow-2xl hover:border-primary/50 transform hover:-translate-y-1"
+              style={{ animationDelay: `${index * 150}ms` }}
             >
-              <div className="w-12 h-12 rounded-lg gradient-primary flex items-center justify-center mb-4">
-                <feature.icon className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 rounded-xl gradient-primary flex items-center justify-center mb-6 shadow-medium">
+                <feature.icon className="w-7 h-7 text-white" />
               </div>
-              <h3 className="text-xl font-heading font-semibold mb-2">
+              <h3 className="text-xl font-semibold mb-3 tracking-tight">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 {feature.description}
               </p>
             </div>
@@ -126,29 +143,35 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="container mx-auto px-4 py-20">
-        <div className="max-w-4xl mx-auto text-center bg-card rounded-2xl p-12 shadow-strong border border-border">
-          <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-            Ready to Get Started?
+      <hr className="border-t border-border/50" />
+
+      {/* --- 3. CTA SECTION: Kêu gọi hành động cuối cùng --- */}
+      <section className="container mx-auto px-4 py-24">
+        <div className="max-w-4xl mx-auto text-center bg-card rounded-3xl p-12 md:p-16 shadow-2xl border-2 border-border/70 transform hover:scale-[1.01] transition-all duration-500">
+          <h2 className="text-3xl md:text-4xl font-extrabold mb-4 tracking-tight">
+            Ready to Transform Your HR?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Join your team on Vine CRM and start managing your work more efficiently
+          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
+            Get instant access to your personalized, role-based dashboard. Secure, fast, and ready to scale.
           </p>
           <Button 
-            size="lg" 
-            className="text-lg px-8 shadow-medium hover:shadow-strong transition-smooth"
+            size="xl" 
+            className="text-lg px-12 h-14 shadow-2xl shadow-primary/40 gradient-primary transition-all hover:scale-105"
             onClick={() => navigate("/auth/login")}
           >
-            Access Your Account
+            Go to Login Now →
           </Button>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t bg-card">
+      <hr className="border-t border-border/50" />
+
+      {/* --- 4. FOOTER --- */}
+      <footer className="bg-card">
         <div className="container mx-auto px-4 py-8 text-center text-muted-foreground">
-          <p>© 2025 Vine CRM. Built with ❤️ for modern teams.</p>
+          <p className="text-sm">
+            © {new Date().getFullYear()} {APP_NAME}. Built with Next.js, Supabase, and Tailwind CSS.
+          </p>
         </div>
       </footer>
     </div>

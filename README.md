@@ -1,6 +1,6 @@
 <div align="center">
   
-# 🍇 Vine CRM
+# 🍇 HRMCRM
 
 ### Enterprise Resource Management Platform
 
@@ -37,7 +37,7 @@
 
 ## 🎯 Overview
 
-**Vine CRM** is a comprehensive Enterprise Resource Management platform designed to streamline internal business operations. Built with modern technologies and focused on real-world data handling, it provides a centralized solution for:
+**HRMCRM** is a comprehensive Enterprise Resource Management platform designed to streamline internal business operations. Built with modern technologies and focused on real-world data handling, it provides a centralized solution for:
 
 - 👥 **Organization Management** - Teams, departments, and user hierarchy
 - ⏰ **Attendance Tracking** - Real-time check-in/check-out with shift management
@@ -381,7 +381,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### 🌟 Star us on GitHub — it motivates us a lot!
 
-**Built with ❤️ by the Vine Team**
+**Built with ❤️ by the HRMTeam**
 
 [🐛 Report Bug](https://github.com/yourusername/vine-crm/issues) • [✨ Request Feature](https://github.com/yourusername/vine-crm/issues)
 

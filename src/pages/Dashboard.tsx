@@ -285,7 +285,7 @@ const Dashboard = () => {
                 <div className="w-2 h-2 mt-2 rounded-full bg-primary animate-pulse-glow" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">System initialized</p>
-                  <p className="text-xs text-muted-foreground mt-1">Welcome to Vine CRM</p>
+                  <p className="text-xs text-muted-foreground mt-1">Welcome to HRM CRM</p>
                 </div>
               </div>
             </div>

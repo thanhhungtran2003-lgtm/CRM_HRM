@@ -1,6 +1,6 @@
-# Supabase Database Setup Guide - Vine CRM
+# Supabase Database Setup Guide - HRMCRM
 
-Complete guide for setting up and configuring the Supabase PostgreSQL database for the Vine CRM application.
+Complete guide for setting up and configuring the Supabase PostgreSQL database for the HRMCRM application.
 
 ---
 
@@ -66,7 +66,7 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || "your
 
 ## Database Schema
 
-### Complete Database Structure for Vine CRM
+### Complete Database Structure for HRMCRM
 
 #### Table 1: `auth.users` (Built-in Supabase)
 System-managed table for authentication. Automatically created by Supabase.
