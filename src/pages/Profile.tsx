@@ -19,18 +19,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 
 // --- SCHEMA & TYPES ---
 
-// Định nghĩa lại các interfaces cần thiết (để tránh lỗi Cannot find name)
-interface Team {
-    id: string;
-    name: string;
-}
-
-interface Shift {
-    id: string;
-    name: string;
-    start_time: string;
-    end_time: string;
-}
+// Định nghĩa lại các interfaces bị thiếu
+interface Team { id: string; name: string; }
+interface Shift { id: string; name: string; start_time: string; end_time: string; }
 
 interface UserProfile {
     id: string;
@@ -38,7 +29,7 @@ interface UserProfile {
     first_name: string | null;
     last_name: string | null;
     avatar_url: string | null;
-    cv_url: string | null; // Cần phải được lấy từ DB
+    cv_url: string | null; // Cột đã được thêm vào DB
     team_id: string | null;
     shift_id: string | null;
     phone: string | null;
@@ -50,8 +41,9 @@ interface UserProfile {
 const profileSchema = z.object({
   first_name: z.string().min(1, "Tên là bắt buộc").max(100),
   last_name: z.string().min(1, "Họ là bắt buộc").max(100),
-  phone: z.string().optional().nullable(),
-  date_of_birth: z.string().optional().nullable(),
+  // Dùng refine cho Zod để xử lý giá trị rỗng/null
+  phone: z.string().optional().nullable().transform(e => e === "" ? null : e), 
+  date_of_birth: z.string().optional().nullable().transform(e => e === "" ? null : e),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -115,19 +107,23 @@ const Profile = () => {
                 return;
             }
 
-            // SỬA LỖI 2352: Sử dụng select('*') vì cv_url đã được thêm vào DB
-            const { data: profileData, error: profileError } = await supabase
-                .from("profiles")
-                // ĐÃ SỬA: Lấy tất cả các cột. Cột cv_url phải được bao gồm.
-                .select("*") 
-                .eq("id", user.id)
-                .single();
+            // Sửa Dòng 123: Trong hàm loadProfile
 
-            if (profileError) throw profileError;
+const { data: profileData, error: profileError } = await supabase
+    .from("profiles")
+    // Chọn tường minh để tránh lỗi
+    .select(`
+        id, email, first_name, last_name, avatar_url, cv_url,
+        team_id, shift_id, phone, date_of_birth, annual_leave_balance
+    `) 
+    .eq("id", user.id)
+    .single();
 
-            // Ép kiểu an toàn (as UserProfile)
-            const userProfile = profileData as UserProfile;
-            setProfile(userProfile);
+if (profileError) throw profileError;
+
+// KHẮC PHỤC LỖI 2352: Ép kiểu dữ liệu trả về thành 'any' trước khi ép kiểu sang UserProfile
+const userProfile = profileData as any as UserProfile; // Bắt buộc phải làm
+setProfile(userProfile);
             
             form.reset({
                 first_name: userProfile.first_name || "",
@@ -136,7 +132,7 @@ const Profile = () => {
                 date_of_birth: userProfile.date_of_birth || "",
             });
 
-            // Tải thông tin tổ chức (Team và Shift)
+            // Lấy Team
             if (userProfile.team_id) {
                 const { data: teamData } = await supabase
                     .from("teams")
@@ -146,6 +142,7 @@ const Profile = () => {
                 setTeam(teamData as Team);
             } else { setTeam(null); }
 
+            // Lấy Shift
             if (userProfile.shift_id) {
                 const { data: shiftData } = await supabase
                     .from("shifts")
@@ -179,8 +176,8 @@ const Profile = () => {
                 .update({
                     first_name: data.first_name,
                     last_name: data.last_name,
-                    phone: data.phone || null,
-                    date_of_birth: data.date_of_birth || null,
+                    phone: data.phone, // Zod đã transform null/rỗng
+                    date_of_birth: data.date_of_birth, // Zod đã transform null/rỗng
                 })
                 .eq("id", user.id);
 
@@ -225,7 +222,6 @@ const Profile = () => {
                 .from("avatars")
                 .getPublicUrl(filePath);
 
-            // ĐÃ SỬA LỖI 2353: update avatar_url
             const { error: updateError } = await supabase
                 .from("profiles")
                 .update({ avatar_url: publicUrl }) 
@@ -275,11 +271,10 @@ const Profile = () => {
                 .from("documents")
                 .getPublicUrl(filePath);
 
-            // SỬA LỖI 2353: Update cột cv_url. Dùng 'as any' tạm thời cho đến khi types đồng bộ
+            // SỬA LỖI 2353: Sử dụng 'as any' để Typescript cho phép cập nhật cột mới
             const { error: updateError } = await supabase
                 .from("profiles")
-                // Dùng 'as any' để TypeScript không báo lỗi khi cột cv_url không có trong types cục bộ
-                .update({ cv_url: publicUrl } ) 
+                .update({ cv_url: publicUrl } as any) 
                 .eq("id", user.id);
 
             if (updateError) throw updateError;
