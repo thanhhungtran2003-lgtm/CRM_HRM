@@ -114,41 +114,51 @@ const DashboardLayout = ({ children, role = 'staff' }: DashboardLayoutProps) => 
 
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background flex flex-col">
             {/* Top Navigation */}
             <header className="sticky top-0 z-50 w-full border-b bg-card shadow-md">
-                <div className="flex h-16 items-center px-4 md:px-6">
+                <div className="flex h-16 items-center px-4 md:px-6 justify-between">
                     {/* Logo and App Name */}
-                    <div 
-                        className="flex items-center gap-3 cursor-pointer"
+                    <div
+                        className="flex items-center gap-2 md:gap-3 cursor-pointer flex-1 min-w-0"
                         onClick={() => navigate("/dashboard")}
                     >
-                        <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center overflow-hidden p-1 shadow-sm">
-                            <img 
-                                src="/LOGO.PNG" 
+                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-lg bg-primary flex items-center justify-center overflow-hidden p-1 shadow-sm flex-shrink-0">
+                            <img
+                                src="/LOGO.PNG"
                                 alt="HRM CRM Logo"
                                 className="w-full h-full object-contain"
                             />
                         </div>
-                        <div>
-                            <h1 className="text-xl font-extrabold tracking-tight">HRM CRM</h1>
-                            <p className="text-xs text-muted-foreground">{getRoleDisplayName(userRole)} Dashboard</p>
+                        <div className="hidden sm:block min-w-0">
+                            <h1 className="text-lg md:text-xl font-heading font-bold tracking-tight truncate">HRM CRM</h1>
+                            <p className="text-xs text-muted-foreground hidden md:block">{getRoleDisplayName(userRole)}</p>
                         </div>
                     </div>
 
-                    <div className="ml-auto flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4 ml-2 md:ml-auto flex-shrink-0">
                         <NotificationBell />
                         <Button variant="ghost" size="icon" onClick={toggleTheme} className="hidden sm:inline-flex">
                             {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                         </Button>
 
+                        {/* Mobile Menu Button */}
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="md:hidden"
+                        >
+                            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                        </Button>
+
                         {/* User Dropdown */}
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                                <Button variant="ghost" className="relative h-10 w-10 rounded-full flex-shrink-0">
                                     <Avatar>
                                         <AvatarImage src={profile?.avatar_url || undefined} />
-                                        <AvatarFallback className="bg-primary text-white">
+                                        <AvatarFallback className="bg-primary text-white font-heading font-semibold">
                                             {getInitials()}
                                         </AvatarFallback>
                                     </Avatar>
@@ -157,7 +167,7 @@ const DashboardLayout = ({ children, role = 'staff' }: DashboardLayoutProps) => 
                             <DropdownMenuContent align="end" className="w-56">
                                 <DropdownMenuLabel>
                                     <div className="flex flex-col space-y-1">
-                                        <p className="text-sm font-medium">{getFullName()}</p>
+                                        <p className="text-sm font-semibold">{getFullName()}</p>
                                         <p className="text-xs text-muted-foreground">{user?.email}</p>
                                     </div>
                                 </DropdownMenuLabel>
