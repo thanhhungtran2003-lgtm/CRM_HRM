@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { 
     Loader2, Upload, User, Mail, Phone, Calendar, Users, Clock, Briefcase, Save, 
-    FileText, Eye, Download, Info, Zap, GraduationCap 
+    FileText, Eye, Download, Info, Zap, GraduationCap, CheckCircle
 } from "lucide-react"; 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,6 +20,8 @@ import { Separator } from "@/components/ui/separator";
 import { 
     Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
 } from "@/components/ui/select"; 
+import { Progress } from "@/components/ui/progress"; // Import Progress bar
+
 
 // --- SCHEMA & TYPES ---
 
@@ -27,21 +29,13 @@ interface Team { id: string; name: string; }
 interface Shift { id: string; name: string; start_time: string; end_time: string; }
 
 interface UserProfile {
-    id: string;
-    email: string;
-    first_name: string | null;
-    last_name: string | null;
-    avatar_url: string | null;
-    cv_url: string | null; 
-    team_id: string | null;
-    shift_id: string | null;
-    phone: string | null;
-    date_of_birth: string | null;
-    annual_leave_balance: number; // GIỮ LẠI TRONG TYPES vì nó vẫn được SELECT
+    id: string; email: string; first_name: string | null; last_name: string | null;
+    avatar_url: string | null; cv_url: string | null; team_id: string | null;
+    shift_id: string | null; phone: string | null; date_of_birth: string | null;
+    annual_leave_balance: number;
     gender: 'Nam' | 'Nữ' | 'Khác' | null;
     employment_status: 'Employed' | 'Student' | 'Trainee' | null;
-    university: string | null;
-    major: string | null;
+    university: string | null; major: string | null;
 }
 
 const profileSchema = z.object({
@@ -66,6 +60,7 @@ const Profile = () => {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [team, setTeam] = useState<Team | null>(null); 
     const [shift, setShift] = useState<Shift | null>(null);
+    const [completion, setCompletion] = useState(0);
 
     const form = useForm<ProfileFormData>({
         resolver: zodResolver(profileSchema),
@@ -74,6 +69,17 @@ const Profile = () => {
             gender: null, employment_status: null, university: "", major: "",
         },
     });
+
+    // --- LOGIC TÍNH ĐỘ HOÀN THIỆN ---
+    const calculateCompletion = (p: UserProfile | null): number => {
+        if (!p) return 0;
+        let score = 0;
+        const requiredFields = [p.first_name, p.last_name, p.email, p.phone, p.date_of_birth, p.gender, p.employment_status, p.university, p.major, p.avatar_url, p.cv_url];
+        const filledFields = requiredFields.filter(val => val && val !== "").length;
+        
+        score = Math.round((filledFields / 11) * 100);
+        return Math.min(score, 100);
+    };
 
     // --- TẠO SIGNED URL BẢO MẬT ---
     const getCvDownloadUrl = useCallback(async (cvUrl: string) => {
@@ -110,8 +116,11 @@ const Profile = () => {
 
             if (profileError) throw profileError;
 
-            const userProfile = profileData as any as UserProfile; // Khắc phục lỗi Typescript
+            // LỖI 1: KHẮC PHỤC LỖI 2352 BẰNG CÁCH ÉP KIỂU MẠNH
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const userProfile = profileData as any as UserProfile; 
             setProfile(userProfile);
+            setCompletion(calculateCompletion(userProfile)); 
             
             form.reset({
                 first_name: userProfile.first_name || "", last_name: userProfile.last_name || "", 
@@ -150,20 +159,21 @@ const Profile = () => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) return;
 
+            // LỖI 2: KHẮC PHỤC LỖI 2353/ANY
+             
             const { error } = await supabase
                 .from("profiles")
                 .update({
                     first_name: data.first_name, last_name: data.last_name, phone: data.phone,
                     date_of_birth: data.date_of_birth, gender: data.gender, employment_status: data.employment_status,
                     university: data.university, major: data.major,
-                    // Không update annual_leave_balance
-                } as any) // Dùng as any để TS cục bộ có thể chưa đồng bộ
+                } as unknown) 
                 .eq("id", user.id);
 
             if (error) throw error;
 
             toast.success("Hồ sơ đã được cập nhật thành công!");
-            await loadProfile();
+            await loadProfile(); 
         } catch (error) {
             console.error("Lỗi cập nhật hồ sơ:", error);
             toast.error("Cập nhật hồ sơ thất bại.");
@@ -223,6 +233,8 @@ const Profile = () => {
 
             const { data: { publicUrl } } = supabase.storage.from("documents").getPublicUrl(filePath);
 
+            // KHẮC PHỤC LỖI 2353/ANY: Dùng 'as any' và tắt ESLint cục bộ
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { error: updateError } = await supabase.from("profiles").update({ cv_url: publicUrl } as any).eq("id", user.id);
             if (updateError) throw updateError;
 
@@ -304,13 +316,19 @@ const Profile = () => {
                                         {/* Đội nhóm */}
                                         <div className="space-y-1">
                                             <Label className="flex items-center gap-1 text-xs text-muted-foreground"><Users className="h-3 w-3" /> Đội nhóm:</Label>
-                                            <p className="font-semibold text-sm">{team?.name || "Chưa phân công"}</p>
+                                            <p className="font-semibold text-base">{team?.name || "Chưa phân công"}</p>
                                         </div>
 
                                         {/* Ca làm việc */}
                                         <div className="space-y-1">
                                             <Label className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" /> Ca làm việc:</Label>
-                                            <p className="font-semibold text-sm">{shift ? `${shift.name} (${shift.start_time} - ${shift.end_time})` : "Chưa phân công"}</p>
+                                            <p className="font-semibold text-base">{shift ? `${shift.name} (${shift.start_time} - ${shift.end_time})` : "Chưa phân công"}</p>
+                                        </div>
+                                        
+                                        {/* Nghỉ phép */}
+                                        <div className="space-y-1">
+                                            <Label className="flex items-center gap-1 text-xs text-muted-foreground"><Calendar className="h-4 w-4" /> Nghỉ phép năm:</Label>
+                                            <p className="font-semibold text-base text-orange-600">{profile.annual_leave_balance} ngày</p>
                                         </div>
                                     </div>
                                 </div>
@@ -322,27 +340,22 @@ const Profile = () => {
                                 <Form {...form}>
                                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                         
-                                        {/* NHÓM 1: THÔNG TIN CƠ BẢN & CÁ NHÂN (1-7) */}
+                                        {/* Khối 1: Thông tin Cơ bản & Liên hệ */}
                                         <div className="space-y-4">
                                             <h3 className="font-semibold text-lg border-b pb-2 flex items-center gap-2 text-primary"><User className="h-4 w-4" /> Thông tin Cá nhân</h3>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                {/* 1. Họ */}
+                                                {/* 1. Họ, 2. Tên */}
                                                 <FormField control={form.control} name="last_name" render={({ field }) => (<FormItem><FormLabel>1. Họ</FormLabel><FormControl><Input {...field} placeholder="Ví dụ: Võ" /></FormControl><FormMessage /></FormItem>)} />
-                                                {/* 2. Tên */}
                                                 <FormField control={form.control} name="first_name" render={({ field }) => (<FormItem><FormLabel>2. Tên</FormLabel><FormControl><Input {...field} placeholder="Ví dụ: Chí Nhân" /></FormControl><FormMessage /></FormItem>)} />
                                                 
-                                                {/* 3. Giới tính */}
+                                                {/* 3. Giới tính, 4. Ngày sinh */}
                                                 <FormField control={form.control} name="gender" render={({ field }) => (
                                                     <FormItem><FormLabel>3. Giới tính</FormLabel><Select onValueChange={field.onChange} value={field.value || ""}><FormControl><SelectTrigger><SelectValue placeholder="Chọn giới tính" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Nam">Nam</SelectItem><SelectItem value="Nữ">Nữ</SelectItem><SelectItem value="Khác">Khác</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                                                 )} />
-                                                
-                                                {/* 4. Ngày sinh */}
                                                 <FormField control={form.control} name="date_of_birth" render={({ field }) => (<FormItem><FormLabel>4. Ngày sinh</FormLabel><FormControl><Input {...field} type="date" /></FormControl><FormMessage /></FormItem>)} />
                                                 
-                                                {/* 5. Số điện thoại */}
+                                                {/* 5. Số điện thoại, 7. Nghề nghiệp */}
                                                 <FormField control={form.control} name="phone" render={({ field }) => (<FormItem><FormLabel>5. Số điện thoại</FormLabel><FormControl><Input {...field} type="tel" placeholder="090-xxx-xxxx" /></FormControl><FormMessage /></FormItem>)} />
-                                                
-                                                {/* 7. Nghề nghiệp */}
                                                 <FormField control={form.control} name="employment_status" render={({ field }) => (
                                                     <FormItem><FormLabel>7. Nghề nghiệp</FormLabel><Select onValueChange={field.onChange} value={field.value || ""}><FormControl><SelectTrigger><SelectValue placeholder="Chọn tình trạng" /></SelectTrigger></FormControl><SelectContent><SelectItem value="Employed">Đã đi làm</SelectItem><SelectItem value="Student">Sinh viên</SelectItem><SelectItem value="Trainee">Thực tập/Học sinh</SelectItem></SelectContent></Select><FormMessage /></FormItem>
                                                 )} />
@@ -355,7 +368,7 @@ const Profile = () => {
                                             </div>
                                         </div>
 
-                                        {/* NHÓM 2: THÔNG TIN HỌC VẤN (8-9) */}
+                                        {/* Khối 2: Thông tin Học vấn */}
                                         <div className="space-y-4">
                                             <h3 className="font-semibold text-lg border-b pb-2 flex items-center gap-2 text-primary"><GraduationCap className="h-4 w-4" /> Học vấn</h3>
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -366,11 +379,12 @@ const Profile = () => {
                                             </div>
                                         </div>
 
-                                        {/* Khối 3: Quản lý CV (Luôn nằm dưới cùng trên cột 2/3) */}
+                                        {/* Khối 3: Quản lý CV */}
                                         <div className="space-y-4">
                                             <h3 className="font-semibold text-lg border-b pb-2 flex items-center gap-2 text-primary"><FileText className="h-4 w-4" /> Quản lý Hồ sơ (CV)</h3>
+                                            <p className="text-sm text-muted-foreground">Tải lên file PDF (Tối đa 5MB). File sẽ được bảo mật và chỉ Admin/Leader xem được.</p>
+                                            
                                             <div className="flex flex-wrap items-center gap-3">
-                                                
                                                 {profile.cv_url ? (
                                                     <>
                                                         <Button variant="secondary" className="bg-primary hover:bg-primary/90 text-white h-9 px-4" onClick={async () => { const url = await getCvDownloadUrl(profile.cv_url!); if (url) { window.open(url, '_blank'); } }}><Eye className="h-4 w-4 mr-2" /> Xem CV</Button>
