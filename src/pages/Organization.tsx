@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react"; // Nhập các hook useState, useEffect từ React
-import DashboardLayout from "@/components/layout/DashboardLayout"; // Nhập DashboardLayout
-import { getUserRole, getCurrentUser } from "@/lib/auth"; // Nhập getUserRole, getCurrentUser từ thư viện xác thực
-import { UserRole } from "@/lib/auth"; // Nhập kiểu UserRole
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"; // Nhập các thành phần Tabs
-import TeamsManagement from "@/components/organization/TeamsManagement"; // Nhập Quản lý Đội nhóm
-import ShiftsManagement from "@/components/organization/ShiftsManagement"; // Nhập Quản lý Ca làm
-import UsersManagement from "@/components/organization/UsersManagement"; // Nhập Quản lý Người dùng
-import AttendanceSettings from "@/components/organization/AttendanceSettings"; // Nhập Cài đặt Chấm công
-import SalaryManagement from "@/components/organization/SalaryManagement"; // Nhập Quản lý Lương
-import SalaryStatistics from "@/components/organization/SalaryStatistics"; // Nhập Thống kê Lương
+import { useState, useEffect } from "react";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { getUserRole, getCurrentUser } from "@/lib/auth";
+import { UserRole } from "@/lib/auth";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TeamsManagement from "@/components/organization/TeamsManagement";
+import ShiftsManagement from "@/components/organization/ShiftsManagement";
+import UsersManagement from "@/components/organization/UsersManagement";
+import AttendanceManagement from "@/components/organization/AttendanceManagement";
+import SalaryManagement from "@/components/organization/SalaryManagement";
+import SalaryStatistics from "@/components/organization/SalaryStatistics";
 
 const Organization = () => {
  // Khởi tạo state role (vai trò) mặc định là 'staff' (nhân viên)
