@@ -417,22 +417,91 @@ const UsersManagement = () => {
     </h1>
 
             <Card className="shadow-lg transition-shadow duration-300 hover:shadow-xl">
-                <CardHeader className="border-b pb-4">
+                <CardHeader className="border-b pb-4 space-y-4">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
                         <div>
                             <CardTitle className="text-xl font-semibold">Danh sách Toàn bộ Nhân viên ({users.length})</CardTitle>
                             <CardDescription>Nhấn vào hàng để xem chi tiết thông tin mở rộng.</CardDescription>
                         </div>
-                        
+
                         {/* INPUT TÌM KIẾM MỚI */}
                         <div className="relative w-full max-w-sm md:w-auto">
                             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                            <Input 
-                                placeholder="Tìm kiếm theo Tên hoặc Email..." 
+                            <Input
+                                placeholder="Tìm kiếm theo Tên hoặc Email..."
                                 className="pl-9"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
+                        </div>
+                    </div>
+
+                    {/* BỘ LỌC NÂNG CAO */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="space-y-2">
+                            <Label htmlFor="filter-account-status" className="text-sm font-medium">Trạng thái Tài khoản</Label>
+                            <Select value={filterAccountStatus} onValueChange={setFilterAccountStatus}>
+                                <SelectTrigger id="filter-account-status" className="h-9">
+                                    <SelectValue placeholder="Tất cả" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="">Tất cả</SelectItem>
+                                    <SelectItem value="PENDING">Chờ duyệt</SelectItem>
+                                    <SelectItem value="APPROVED">Đã duyệt</SelectItem>
+                                    <SelectItem value="REJECTED">Từ chối</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="filter-role" className="text-sm font-medium">Vai trò</Label>
+                            <Select value={filterRole} onValueChange={setFilterRole}>
+                                <SelectTrigger id="filter-role" className="h-9">
+                                    <SelectValue placeholder="Tất cả" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="">Tất cả</SelectItem>
+                                    <SelectItem value="admin">Admin</SelectItem>
+                                    <SelectItem value="hr">HR</SelectItem>
+                                    <SelectItem value="leader">Leader</SelectItem>
+                                    <SelectItem value="teacher">Teacher</SelectItem>
+                                    <SelectItem value="it">IT</SelectItem>
+                                    <SelectItem value="content">Content</SelectItem>
+                                    <SelectItem value="design">Design</SelectItem>
+                                    <SelectItem value="staff">Staff</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="filter-status" className="text-sm font-medium">Tình trạng Công việc</Label>
+                            <Select value={filterStatus} onValueChange={setFilterStatus}>
+                                <SelectTrigger id="filter-status" className="h-9">
+                                    <SelectValue placeholder="Tất cả" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="">Tất cả</SelectItem>
+                                    <SelectItem value="Employed">Đã đi làm</SelectItem>
+                                    <SelectItem value="Student">Sinh viên</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium opacity-0">Reset</Label>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full h-9"
+                                onClick={() => {
+                                    setSearchTerm('');
+                                    setFilterRole('');
+                                    setFilterStatus('');
+                                    setFilterAccountStatus('');
+                                }}
+                            >
+                                Đặt lại bộ lọc
+                            </Button>
                         </div>
                     </div>
                 </CardHeader>
