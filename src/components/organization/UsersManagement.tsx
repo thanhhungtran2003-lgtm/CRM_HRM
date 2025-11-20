@@ -88,7 +88,7 @@ const UsersManagement = () => {
                 `)
                 .order('last_name');
 
-            // ÁP DỤNG BỘ LỌC TÌM KIẾM
+            // ÁP DỤNG BỘ L���C TÌM KIẾM
             if (searchTerm) {
                 const searchPattern = `%${searchTerm}%`;
                 query = query.or(
@@ -261,13 +261,18 @@ const UsersManagement = () => {
                             <AvatarFallback className="text-xs bg-primary/20">{getInitials(user.first_name, user.last_name)}</AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                            <span className="text-sm font-medium tracking-tight">{fullName}</span> 
+                            <span className="text-sm font-medium tracking-tight">{fullName}</span>
                             <span className="text-xs text-muted-foreground">{user.email}</span>
                         </div>
                     </TableCell>
                     <TableCell>
                         <Badge variant={getRoleBadgeVariant(role)}>
                             {role}
+                        </Badge>
+                    </TableCell>
+                    <TableCell>
+                        <Badge variant={user.account_status === 'APPROVED' ? 'default' : user.account_status === 'REJECTED' ? 'destructive' : 'secondary'}>
+                            {user.account_status === 'APPROVED' ? '✓ Đã duyệt' : user.account_status === 'REJECTED' ? '✗ Từ chối' : '⏳ Chờ duyệt'}
                         </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground font-medium text-sm">
@@ -390,7 +395,7 @@ const UsersManagement = () => {
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Thêm Người dùng Mới</DialogTitle>
-                            <DialogDescription>Ch��c năng này sẽ yêu cầu người dùng đăng ký hoặc cần Service Role để tạo tài khoản trực tiếp.</DialogDescription>
+                            <DialogDescription>Chức năng này sẽ yêu cầu người dùng đăng ký hoặc cần Service Role để tạo tài khoản trực tiếp.</DialogDescription>
                         </DialogHeader>
                         {/* Form Thêm Người dùng sẽ được đặt ở đây */}
                     </DialogContent>
