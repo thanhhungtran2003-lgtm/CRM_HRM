@@ -134,6 +134,104 @@ const UsersManagement = () => {
         fetchUsers();
     }, [fetchUsers]);
 
+    // --- APPROVE USER FUNCTION ---
+    const handleApproveUser = async (userId: string, userName: string) => {
+        setIsApprovingUser(userId);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ account_status: 'APPROVED' })
+                .eq('id', userId);
+
+            if (error) throw error;
+
+            toast({
+                title: "Phê duyệt thành công",
+                description: `Tài khoản ${userName} đã được phê duyệt.`,
+            });
+
+            // Refresh users list
+            fetchUsers();
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Lỗi phê duyệt",
+                description: error instanceof Error ? error.message : "Không thể phê duyệt tài khoản",
+            });
+        } finally {
+            setIsApprovingUser(null);
+        }
+    };
+
+    // --- REJECT USER FUNCTION ---
+    const handleRejectUser = async (userId: string, userName: string) => {
+        setIsApprovingUser(userId);
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({ account_status: 'REJECTED' })
+                .eq('id', userId);
+
+            if (error) throw error;
+
+            toast({
+                title: "Từ chối thành công",
+                description: `Tài khoản ${userName} đã bị từ chối.`,
+            });
+
+            // Refresh users list
+            fetchUsers();
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Lỗi từ chối",
+                description: error instanceof Error ? error.message : "Không thể từ chối tài khoản",
+            });
+        } finally {
+            setIsApprovingUser(null);
+        }
+    };
+
+    // --- UPDATE USER ROLE FUNCTION ---
+    const handleUpdateRole = async () => {
+        if (!selectedUserForRole || !selectedNewRole) return;
+
+        try {
+            // First, delete existing roles
+            const { error: deleteError } = await supabase
+                .from('user_roles')
+                .delete()
+                .eq('user_id', selectedUserForRole.id);
+
+            if (deleteError) throw deleteError;
+
+            // Then insert new role
+            const { error: insertError } = await supabase
+                .from('user_roles')
+                .insert({
+                    user_id: selectedUserForRole.id,
+                    role: selectedNewRole,
+                });
+
+            if (insertError) throw insertError;
+
+            toast({
+                title: "Cập nhật vai trò thành công",
+                description: `${selectedUserForRole.first_name} ${selectedUserForRole.last_name} đã được gán vai trò ${selectedNewRole}.`,
+            });
+
+            setIsRoleModalOpen(false);
+            setSelectedUserForRole(null);
+            setSelectedNewRole('');
+            fetchUsers();
+        } catch (error) {
+            toast({
+                variant: "destructive",
+                title: "Lỗi cập nhật vai trò",
+                description: error instanceof Error ? error.message : "Không thể cập nhật vai trò",
+            });
+        }
+    };
 
     // --- UI RENDER ---
 
@@ -292,7 +390,7 @@ const UsersManagement = () => {
                     <DialogContent>
                         <DialogHeader>
                             <DialogTitle>Thêm Người dùng Mới</DialogTitle>
-                            <DialogDescription>Chức năng này sẽ yêu cầu người dùng đăng ký hoặc cần Service Role để tạo tài khoản trực tiếp.</DialogDescription>
+                            <DialogDescription>Ch��c năng này sẽ yêu cầu người dùng đăng ký hoặc cần Service Role để tạo tài khoản trực tiếp.</DialogDescription>
                         </DialogHeader>
                         {/* Form Thêm Người dùng sẽ được đặt ở đây */}
                     </DialogContent>
