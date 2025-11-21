@@ -13,6 +13,7 @@ import {
 import { getCurrentUser, getUserProfile, signOut, UserRole, getUserRole } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import NotificationBell from "@/components/notifications/NotificationBell";
+import { supabase } from "@/integrations/supabase/client";
 
 // --- Định nghĩa kiểu dữ liệu ---
 
@@ -43,8 +44,7 @@ const DashboardLayout = ({ children, role = 'staff' }: DashboardLayoutProps) => 
     // --- LOGIC MENU ITEMS ---
     const baseMenuItems: NavItem[] = [
         { icon: LayoutDashboard, label: "Bảng điều khiển", path: "/dashboard" },
-        { icon: Clock, label: "Chấm công", path: "/attendance" }, // Chấm công
-        { icon: FileText, label: "Nghỉ phép", path: "/leave" }, // Nghỉ phép (Tách riêng)
+        { icon: Clock, label: "Chấm công", path: "/attendance" },
         { icon: ListChecks, label: "Công việc", path: "/tasks" },
         { icon: Calendar, label: "Phòng họp", path: "/meeting-rooms" },
     ];
@@ -62,11 +62,23 @@ const DashboardLayout = ({ children, role = 'staff' }: DashboardLayoutProps) => 
                 navigate("/auth/login");
                 return;
             }
-            
-            setUser(currentUser); 
+
+            // Check registration status
+            const { data: registration } = await supabase
+                .from('user_registrations')
+                .select('status')
+                .eq('user_id', currentUser.id)
+                .single();
+
+            if (registration?.status === 'pending' || registration?.status === 'rejected') {
+                navigate("/auth/pending-approval");
+                return;
+            }
+
+            setUser(currentUser);
             const userProfile = await getUserProfile(currentUser.id);
             setProfile(userProfile);
-            
+
             const fetchedRole = await getUserRole(currentUser.id);
             setUserRole(fetchedRole);
         };
