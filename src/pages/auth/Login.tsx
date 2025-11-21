@@ -96,7 +96,7 @@ const Login = () => {
 
         try {
             const { error } = await signIn(loginEmail, loginPassword);
-            
+
             if (error) {
                 toast({
                     variant: "destructive",
@@ -106,12 +106,43 @@ const Login = () => {
                 return;
             }
 
+            // Get current user and check registration status
+            const user = await getCurrentUser();
+            if (!user) {
+                navigate("/auth/login");
+                return;
+            }
+
+            // Check registration status
+            const { data: registration } = await supabase
+                .from('user_registrations')
+                .select('status')
+                .eq('user_id', user.id)
+                .single();
+
+            if (registration?.status === 'pending') {
+                toast({
+                    title: "Chờ Phê Duyệt",
+                    description: "Tài khoản của bạn đang chờ Admin phê duyệt..."
+                });
+                navigate("/auth/pending-approval");
+                return;
+            }
+
+            if (registration?.status === 'rejected') {
+                toast({
+                    title: "Tài Khoản Bị Từ Chối",
+                    description: "Tài khoản của bạn không được phê duyệt. Vui lòng liên hệ hỗ trợ."
+                });
+                navigate("/auth/pending-approval");
+                return;
+            }
+
             toast({
                 title: "Chào mừng trở lại!",
-                description: "Đăng nhập thành công, đang kiểm tra quyền..."
+                description: "Đăng nhập thành công..."
             });
-            // Giả định logic kiểm tra quyền nằm trong /dashboard hoặc AuthProvider
-            navigate("/dashboard"); 
+            navigate("/dashboard");
         } catch (error: any) {
             toast({
                 variant: "destructive",
