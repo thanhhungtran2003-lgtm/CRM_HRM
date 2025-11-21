@@ -83,8 +83,8 @@ const Dashboard = () => {
                 leaveBalance: (profile as BasicProfile)?.annual_leave_balance || 0, 
                 upcomingMeetings: meetings?.length || 0,
             });
-        } catch (error) {
-            console.error("Lỗi tải stats nhân viên:", error);
+        } catch (error: any) {
+            console.error("Lỗi tải stats nhân viên:", error?.message || error);
         }
     }, []);
 
@@ -149,7 +149,7 @@ const Dashboard = () => {
         ? Math.round((stats.completedTasks / stats.totalTasks) * 100) 
         : 0;
 
-    // Tiêu đề dựa trên Vai trò và Tên
+    // Tiêu đề dựa trên Vai trò và T��n
     const roleTitle = role === 'admin' || role === 'bod' ? 'Quản trị' : role === 'leader' ? 'Leader' : 'Nhân viên';
 
 
