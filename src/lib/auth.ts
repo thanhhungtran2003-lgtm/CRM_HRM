@@ -56,9 +56,9 @@ export const signIn = async (email: string, password: string) => {
   return { data, error };
 };
 
-export const signUp = async (email: string, password: string, metadata?: { first_name?: string; last_name?: string }) => {
+export const signUp = async (email: string, password: string, metadata?: any) => {
   const redirectUrl = `${window.location.origin}/`;
-  
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -124,6 +124,24 @@ export const rejectRegistration = async (registrationId: string, reason: string)
     .from('user_registrations')
     .update({ status: 'rejected', rejection_reason: reason })
     .eq('id', registrationId);
+
+  return { data, error };
+};
+
+export const getRegistrationStatus = async (userId: string) => {
+  const { data, error } = await supabase
+    .from('user_registrations')
+    .select('status, rejection_reason, reapplication_count')
+    .eq('user_id', userId)
+    .single();
+
+  return { data, error };
+};
+
+export const createUserRegistration = async (registrationData: any) => {
+  const { data, error } = await supabase
+    .from('user_registrations')
+    .insert([registrationData]);
 
   return { data, error };
 };

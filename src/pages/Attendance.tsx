@@ -5,10 +5,14 @@ import AttendanceManagementWidget from "@/components/attendance/AttendanceManage
 import { getUserRole, getCurrentUser } from "@/lib/auth";
 import { UserRole } from "@/lib/auth";
 import VietnamClock from "@/components/VietnamClock";
+import LeaveModal from "@/components/leave/LeaveModal";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "lucide-react";
 
 const Attendance = () => {
   const [role, setRole] = useState<UserRole>('staff');
   const [isAdminOrLeader, setIsAdminOrLeader] = useState(false);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
 
   useEffect(() => {
     const loadRole = async () => {
@@ -34,7 +38,15 @@ const Attendance = () => {
               {isAdminOrLeader ? 'Quản lý chấm công toàn công ty và theo dõi chi tiết' : 'Quản lý chấm công theo ca làm việc và theo dõi tăng ca'}
             </p>
           </div>
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center gap-3">
+            <Button
+              onClick={() => setIsLeaveModalOpen(true)}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <Calendar className="h-4 w-4" />
+              Nghỉ Phép
+            </Button>
             <VietnamClock />
           </div>
         </div>
@@ -42,6 +54,13 @@ const Attendance = () => {
         {/* Content */}
         {isAdminOrLeader ? <AttendanceManagementWidget /> : <ShiftAttendanceWidget />}
       </div>
+
+      {/* Leave Modal */}
+      <LeaveModal
+        open={isLeaveModalOpen}
+        onOpenChange={setIsLeaveModalOpen}
+        role={role}
+      />
     </DashboardLayout>
   );
 };
