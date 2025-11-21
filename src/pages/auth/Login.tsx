@@ -73,7 +73,7 @@ const Login = () => {
             if (error) {
                 toast({
                     variant: "destructive",
-                    title: "Đăng nhập Thất bại",
+                    title: "Đăng nhập Th��t bại",
                     description: error.message
                 });
                 return;
@@ -99,13 +99,33 @@ const Login = () => {
     // --- Xử lý Đăng ký ---
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!signupRole) {
+            toast({
+                variant: "destructive",
+                title: "Lỗi",
+                description: "Vui lòng chọn vị trí công việc"
+            });
+            return;
+        }
+
+        if (!signupDepartment) {
+            toast({
+                variant: "destructive",
+                title: "Lỗi",
+                description: "Vui lòng chọn phòng ban"
+            });
+            return;
+        }
+
         setIsLoading(true);
 
         try {
             const { error } = await signUp(signupEmail, signupPassword, {
-                full_name: `${signupFirstName} ${signupLastName}`
+                first_name: signupFirstName,
+                last_name: signupLastName
             });
-            
+
             if (error) {
                 toast({
                     variant: "destructive",
@@ -117,9 +137,17 @@ const Login = () => {
 
             toast({
                 title: "Tạo tài khoản Thành công!",
-                description: "Tài khoản của bạn đã được tạo và đang chờ phê duyệt từ Admin."
+                description: "Tài khoản của bạn đã được tạo và đang chờ phê duyệt từ Admin/HR."
             });
-            // Giữ nguyên ở trang này, chờ người dùng đọc thông báo
+
+            // Reset form
+            setSignupEmail("");
+            setSignupPassword("");
+            setSignupPhone("");
+            setSignupFirstName("");
+            setSignupLastName("");
+            setSignupRole("");
+            setSignupDepartment("");
         } catch (error: any) {
             toast({
                 variant: "destructive",
