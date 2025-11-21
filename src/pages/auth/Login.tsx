@@ -422,59 +422,7 @@ const Login = () => {
                                         />
                                     </div>
 
-                                    {/* Department */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="signup-department">Bộ Phận *</Label>
-                                        <Select value={signupDepartment} onValueChange={setSignupDepartment}>
-                                            <SelectTrigger id="signup-department" disabled={isLoading}>
-                                                <SelectValue placeholder="Chọn bộ phận" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {DEPARTMENTS.map((dept) => (
-                                                    <SelectItem key={dept.value} value={dept.value}>
-                                                        {dept.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    {/* Employment Status */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="signup-employment">Trạng Thái Việc Làm *</Label>
-                                        <Select value={signupEmploymentStatus} onValueChange={setSignupEmploymentStatus}>
-                                            <SelectTrigger id="signup-employment" disabled={isLoading}>
-                                                <SelectValue placeholder="Chọn trạng thái" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {EMPLOYMENT_STATUS.map((status) => (
-                                                    <SelectItem key={status.value} value={status.value}>
-                                                        {status.label}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    {/* CV Upload */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="signup-cv">CV (Tùy chọn)</Label>
-                                        <div className="flex items-center gap-2">
-                                            <Input
-                                                id="signup-cv"
-                                                type="file"
-                                                accept=".pdf,.doc,.docx"
-                                                onChange={handleCvUpload}
-                                                disabled={isLoading}
-                                                className="cursor-pointer"
-                                            />
-                                            <Upload className="h-4 w-4 text-muted-foreground" />
-                                        </div>
-                                        {cvFile && (
-                                            <p className="text-xs text-green-600">✓ {cvFile.name} đã chọn</p>
-                                        )}
-                                        <p className="text-xs text-muted-foreground">Chỉ chấp nhận PDF hoặc Word (tối đa 5MB)</p>
-                                    </div>
+                                    
 
                                     {/* Password */}
                                     <div className="space-y-2">
