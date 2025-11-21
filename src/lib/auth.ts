@@ -56,9 +56,9 @@ export const signIn = async (email: string, password: string) => {
   return { data, error };
 };
 
-export const signUp = async (email: string, password: string, metadata?: { first_name?: string; last_name?: string }) => {
+export const signUp = async (email: string, password: string, metadata?: any) => {
   const redirectUrl = `${window.location.origin}/`;
-  
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
