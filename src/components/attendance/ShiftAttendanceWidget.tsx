@@ -421,12 +421,11 @@ const ShiftAttendanceWidget = () => {
   };
 
   const filteredRecords = allRecords.filter(record => {
-    const recordDate = new Date(record.timestamp);
+    const recordDate = new Date(record.date);
     const today = new Date().toISOString().split('T')[0];
-    const recordDay = recordDate.toISOString().split('T')[0];
 
     if (activeTab === 'today') {
-      return recordDay === today;
+      return record.date === today;
     } else if (activeTab === 'week') {
       return recordDate >= startOfWeek(new Date()) && recordDate <= endOfWeek(new Date());
     } else {
@@ -512,8 +511,17 @@ const ShiftAttendanceWidget = () => {
               ) : (
                 filteredRecords.map((record) => {
                   const shiftInfo = SHIFT_TIMES[record.shift_type];
-                  const { status: statusText, color } = getShiftStatus(record);
-                  
+                  const statusColor =
+                    record.status === 'completed' ? 'bg-green-100 text-green-700' :
+                    record.status === 'checked_in' ? 'bg-blue-100 text-blue-700' :
+                    record.status === 'absent' ? 'bg-red-100 text-red-700' :
+                    'bg-gray-100 text-gray-700';
+                  const statusText =
+                    record.status === 'completed' ? 'Hoàn thành' :
+                    record.status === 'checked_in' ? 'Đang làm' :
+                    record.status === 'absent' ? 'Vắng mặt' :
+                    'Chờ xử lý';
+
                   return (
                     <div key={record.id} className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors">
                       <div className="space-y-1">
@@ -532,7 +540,7 @@ const ShiftAttendanceWidget = () => {
                           }
                         </p>
                       </div>
-                      <Badge className={`${color} border-0`}>{statusText}</Badge>
+                      <Badge className={`${statusColor} border-0`}>{statusText}</Badge>
                     </div>
                   );
                 })
