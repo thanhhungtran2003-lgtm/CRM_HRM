@@ -290,12 +290,11 @@ const AdminAttendanceManagement = () => {
             {/* Team Filter */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1 block">Phòng ban</label>
-              <Select value={filterTeam} onValueChange={setFilterTeam}>
+              <Select value={filterTeam || ""} onValueChange={setFilterTeam}>
                 <SelectTrigger>
                   <SelectValue placeholder="Tất cả" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Tất cả</SelectItem>
                   {teamList.map(team => (
                     <SelectItem key={team.id} value={team.id}>{team.name}</SelectItem>
                   ))}
