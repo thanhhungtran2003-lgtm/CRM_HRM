@@ -5,7 +5,7 @@ import { UserRole } from "@/lib/auth";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 
-import { EnhancedTaskBoard } from "@/components/tasks/EnhancedTaskBoard";
+import { KanbanBoard } from "@/components/tasks/KanbanBoard";
 import TaskList from "@/components/tasks/TaskList";
 import ScheduleTab from "@/components/tasks/ScheduleTab";
 import TeamAllocationTab from "@/components/tasks/TeamAllocationTab";
