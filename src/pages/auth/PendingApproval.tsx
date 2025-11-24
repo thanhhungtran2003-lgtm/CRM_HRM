@@ -43,33 +43,9 @@ const PendingApproval = () => {
 
     checkStatus();
 
-    // Subscribe to real-time updates
-    const channel = supabase
-      .channel('registration-status-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'user_registrations',
-        },
-        (payload) => {
-          if (payload.new.status === 'approved') {
-            navigate('/dashboard');
-          } else {
-            setRegistration({
-              status: payload.new.status,
-              created_at: payload.new.created_at,
-              rejection_reason: payload.new.rejection_reason,
-              reapplication_count: payload.new.reapplication_count,
-            });
-          }
-        }
-      )
-      .subscribe();
-
+    // No real-time subscription as table doesn't exist
     return () => {
-      supabase.removeChannel(channel);
+      // Cleanup
     };
   }, [navigate]);
 
